@@ -46,11 +46,9 @@ void queue_init(message_queue* queue) {
 	queue->refcount = 1;
 }
 
-void S_queue_enqueue(pTHX_ message_queue* queue, const message* message_, perl_mutex* external_lock) {
+void S_queue_enqueue(pTHX_ message_queue* queue, const message* message_) {
 	message* new_entry;
 	MUTEX_LOCK(&queue->mutex);
-	if (external_lock)
-		MUTEX_UNLOCK(external_lock);
 
 	node_push(&queue->back, (message*)message_);
 	if (queue->front == NULL)
@@ -68,11 +66,9 @@ static const message* queue_shift(message_queue* queue) {
 	return ret;
 }
 
-const message* S_queue_dequeue(pTHX_ message_queue* queue, perl_mutex* external_lock) {
+const message* S_queue_dequeue(pTHX_ message_queue* queue) {
 	const message* ret;
 	MUTEX_LOCK(&queue->mutex);
-	if (external_lock)
-		MUTEX_UNLOCK(external_lock);
 
 	while (!queue->front)
 		COND_WAIT(&queue->condvar, &queue->mutex);
@@ -83,10 +79,8 @@ const message* S_queue_dequeue(pTHX_ message_queue* queue, perl_mutex* external_
 	return ret;
 }
 
-const message* S_queue_dequeue_nb(pTHX_ message_queue* queue, perl_mutex* external_lock) {
+const message* S_queue_dequeue_nb(pTHX_ message_queue* queue) {
 	MUTEX_LOCK(&queue->mutex);
-	if (external_lock)
-		MUTEX_UNLOCK(external_lock);
 
 	if (queue->front) {
 		const message* ret = queue_shift(queue);

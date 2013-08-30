@@ -72,7 +72,7 @@ enqueue(object, ...)
 			Perl_croak(aTHX_ "Can't send an empty list\n");
 		PUSHMARK(MARK + 2);
 		message_from_stack(message, MARK + 1);
-		queue_enqueue(queue, message, NULL);
+		queue_enqueue(queue, message);
 
 void
 dequeue(object)
@@ -82,7 +82,7 @@ dequeue(object)
 		const message* message;
 	PPCODE:
 		queue = get_queue(object);
-		message = queue_dequeue(queue, NULL);
+		message = queue_dequeue(queue);
 		message_to_stack(message, GIMME_V);
 		destroy_message(message);
 
@@ -95,7 +95,7 @@ dequeue_nb(object)
 		const message* message;
 	PPCODE:
 		queue = get_queue(object);
-		if (message = queue_dequeue_nb(queue, NULL)) {
+		if (message = queue_dequeue_nb(queue)) {
 			message_to_stack(message, GIMME_V);
 			destroy_message(message);
 		}
