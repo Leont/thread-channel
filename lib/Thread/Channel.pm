@@ -3,7 +3,7 @@ package Thread::Channel;
 use strict;
 use warnings;
 
-use Storable 2.05 ();
+use Sereal ();
 
 use XSLoader;
 XSLoader::load('Thread::Channel', __PACKAGE__->VERSION);

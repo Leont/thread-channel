@@ -2,7 +2,7 @@
 #undef PACKED
 #endif
 
-enum message_type { EMPTY, STRING, PACKED, STORABLE };
+enum message_type { EMPTY, STRING, PACKED, SEREAL };
 
 typedef struct message {
 	struct message* next;

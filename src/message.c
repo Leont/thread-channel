@@ -39,13 +39,12 @@ const message* S_message_store_value(pTHX_ SV* value) {
 	const message* ret;
 	ENTER;
 	SAVETMPS;
-	sv_setiv(save_scalar(gv_fetchpv("Storable::Deparse", TRUE | GV_ADDMULTI, SVt_PV)), 1);
 	PUSHMARK(SP);
 	XPUSHs(sv_2mortal(newRV_inc(value)));
 	PUTBACK;
-	call_pv("Storable::mstore", G_SCALAR);
+	call_pv("Sereal::Encoder::encode_sereal", G_SCALAR);
 	SPAGAIN;
-	ret = message_new_sv(POPs, STORABLE);
+	ret = message_new_sv(POPs, SEREAL);
 	FREETMPS;
 	LEAVE;
 	PUTBACK;
@@ -89,11 +88,10 @@ SV* S_message_load_value(pTHX_ const message* message) {
 	dSP;
 	SV* ret;
 
-	sv_setiv(save_scalar(gv_fetchpv("Storable::Eval", TRUE | GV_ADDMULTI, SVt_PV)), 1);
 	PUSHMARK(SP);
 	XPUSHs(sv_2mortal(message_get_sv(message)));
 	PUTBACK;
-	call_pv("Storable::thaw", G_SCALAR);
+	call_pv("Sereal::Decoder::decode_sereal", G_SCALAR);
 	SPAGAIN;
 	ret = POPs;
 	PUTBACK;
@@ -115,7 +113,7 @@ void S_message_to_stack(pTHX_ const message* message, U32 context) {
 			SPAGAIN;
 			break;
 		}
-		case STORABLE: {
+		case SEREAL: {
 			AV* values = (AV*) SvRV(message_load_value(message));
 			SPAGAIN;
 
@@ -158,7 +156,7 @@ AV* S_message_to_array(pTHX_ const message* message) {
 			ret = av_make(count, mark + 1);
 			break;
 		}
-		case STORABLE: {
+		case SEREAL: {
 			ret = (AV*)SvREFCNT_inc(SvRV(message_load_value(message)));
 			SPAGAIN;
 			break;
