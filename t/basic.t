@@ -20,4 +20,8 @@ is(exception { $ret = $channel->dequeue }, undef, 'Can dequeue');
 
 is($ret, 'test', 'Dequeued \'test\'');
 
+is(exception { $ret = $channel->dequeue_nb }, undef, 'Can dequeue nonblockingly');
+
+is($ret, undef, 'Dequeued nothing');
+
 done_testing;
