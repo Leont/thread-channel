@@ -1,8 +1,10 @@
 typedef message queue_node;
 
 typedef struct {
+#ifdef USE_ITHREADS
 	perl_mutex mutex;
 	perl_cond condvar;
+#endif
 	message* front;
 	message* back;
 	IV refcount;
