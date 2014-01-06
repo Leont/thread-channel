@@ -30,6 +30,10 @@ static int queue_duplicator(pTHX_ MAGIC* mg, CLONE_PARAMS* params) {
 
 static const MGVTBL queue_magic = { NULL, NULL, NULL, NULL, queue_destructor, NULL, queue_duplicator, NULL };
 
+#ifndef mg_findext
+#define mg_findext(sv, magic, ptr) mg_find(sv, magic)
+#endif
+
 static message_queue* S_get_queue(pTHX_ SV* queue_object) {
 	if (!sv_isobject(queue_object) || !sv_derived_from(queue_object, "Thread::Channel"))
 		Perl_croak(aTHX_ "Something is very wrong, this is not a queue object\n");
